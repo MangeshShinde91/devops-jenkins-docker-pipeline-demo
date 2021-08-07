@@ -21,9 +21,11 @@ pipeline {
     
     stage('Retrive Commit ID') {
       steps {
-        sh "git rev-parse --short HEAD > .git/commit-id"                        
-        commit_id = readFile('.git/commit-id').trim()
-        echo commit_id
+        script {
+          sh "git rev-parse --short HEAD > .git/commit-id"                        
+          commit_id = readFile('.git/commit-id').trim()
+          echo commit_id
+        }
       }
     }
 
