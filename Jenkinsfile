@@ -19,5 +19,11 @@ pipeline {
       }
     }
 
+    stage('testcode') {
+      steps {
+        sh 'mvn test'
+      }
+    }
+
   }
 }
