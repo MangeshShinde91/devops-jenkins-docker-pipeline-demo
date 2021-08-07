@@ -88,9 +88,9 @@ pipeline {
       steps{
         script {
           dockerImage.withRun('-p 8585:8585') {c ->
-            sh "curl http://checkip.amazonaws.com" > './host_ip.txt'
-            host_ip = readFile('./host_ip.txt').trim()
-            sh "curl -i http://${host_ip}:8585/"
+            sh "curl http://checkip.amazonaws.com > .git/host_ipaddr"
+            host_ip = readFile('.git/host_ipaddr').trim()
+            sh "curl -i http://${host_ip}:8585/greeting"
 		  }
         }
       }
