@@ -83,9 +83,11 @@ pipeline {
     
     stage('Run Container') {
       steps{
-        dockerImage.withRun('-p 8585:8585') {c ->
-	      sh "curl -i http://${hostIp(c)}:8585/"
-	    }
+        script {
+          dockerImage.withRun('-p 8585:8585') {c ->
+		    sh "curl -i http://${hostIp(c)}:8585/"
+		  }
+        }
       }
     }
   }
