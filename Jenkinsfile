@@ -31,5 +31,11 @@ pipeline {
       }
     }
 
+    stage('verifycode') {
+      steps {
+        sh 'mvn verify'
+      }
+    }
+
   }
 }
