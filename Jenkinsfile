@@ -37,5 +37,11 @@ pipeline {
       }
     }
 
+    stage('installcode') {
+      steps {
+        sh 'mvn install'
+      }
+    }
+
   }
 }
