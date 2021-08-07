@@ -13,5 +13,11 @@ pipeline {
       }
     }
 
+    stage('compilecode') {
+      steps {
+        sh 'mvn compile'
+      }
+    }
+
   }
 }
