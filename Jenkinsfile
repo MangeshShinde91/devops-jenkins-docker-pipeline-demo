@@ -4,6 +4,7 @@ pipeline {
     registryCredential = 'mangeshdevops'
     dockerImage = ''
     commit_id = ''
+    host_ip = ''
   }
   agent any
   stages {
@@ -87,7 +88,9 @@ pipeline {
       steps{
         script {
           dockerImage.withRun('-p 8585:8585') {c ->
-		    sh "curl -i http://${hostIp(c)}:8585/"
+            sh "curl http://checkip.amazonaws.com" > './host_ip.txt'
+            host_ip = readFile('./host_ip.txt').trim()
+            sh "curl -i http://${host_ip}:8585/"
 		  }
         }
       }
