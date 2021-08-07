@@ -25,5 +25,11 @@ pipeline {
       }
     }
 
+    stage('packagecode') {
+      steps {
+        sh 'mvn package'
+      }
+    }
+
   }
 }
