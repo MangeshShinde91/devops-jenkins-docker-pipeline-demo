@@ -43,11 +43,5 @@ pipeline {
       }
     }
 
-    stage('deploycode') {
-      steps {
-        sh 'mvn deploy'
-      }
-    }
-
   }
 }
