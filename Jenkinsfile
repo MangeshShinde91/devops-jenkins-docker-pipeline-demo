@@ -1,4 +1,8 @@
 pipeline {
+  environment {
+    registry = "mangeshdevops/jenkins-docker-demo"
+    registryCredential = 'mangeshdevops'
+  }
   agent any
   stages {
     stage('gitcheckout') {
@@ -40,6 +44,14 @@ pipeline {
     stage('installcode') {
       steps {
         sh 'mvn install'
+      }
+    }
+    
+    stage('deploycode') {
+      steps {
+        script {
+          docker.build registry + ":$BUILD_NUMBER"
+        }
       }
     }
 
