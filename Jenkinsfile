@@ -2,58 +2,101 @@ pipeline {
   environment {
     registry = "mangeshdevops/jenkins-docker-demo"
     registryCredential = 'mangeshdevops'
+    dockerImage = ''
+    commit_id = ''
   }
   agent any
   stages {
+  	stage('clean workspace') {
+  	  steps {
+  	  	cleanWs()
+  	  }
+  	}
+  	
     stage('gitcheckout') {
       steps {
         git(credentialsId: 'MangeshShinde91', url: 'https://github.com/MangeshShinde91/devops-jenkins-docker-pipeline-demo.git', branch: 'master', poll: true)
       }
     }
+    
+    stage('Retrive Commit ID') {
+      steps {
+        sh "git rev-parse --short HEAD > .git/commit-id"                        
+        commit_id = readFile('.git/commit-id').trim()
+        echo commit_id
+      }
+    }
 
-    stage('cleancode') {
+    stage('Clean Code') {
       steps {
         sh 'mvn clean'
       }
     }
 
-    stage('compilecode') {
+    stage('Compile Code') {
       steps {
         sh 'mvn compile'
       }
     }
 
-    stage('testcode') {
+    stage('Test Code') {
       steps {
         sh 'mvn test'
       }
     }
 
-    stage('packagecode') {
+    stage('Package Code') {
       steps {
         sh 'mvn package'
       }
     }
 
-    stage('verifycode') {
+    stage('Verify Code') {
       steps {
         sh 'mvn verify'
       }
     }
 
-    stage('installcode') {
+    stage('Install Code') {
       steps {
         sh 'mvn install'
       }
     }
     
-    stage('deploycode') {
+    stage('Build Docker Image') {
       steps {
         script {
-          docker.build registry + ":$BUILD_NUMBER"
+          dockerImage = docker.build registry + ":${commit_id}"
         }
       }
     }
-
+    
+    stage('Deploy Image') {
+      steps{
+        script {
+          docker.withRegistry( '', registryCredential ) {
+            dockerImage.push()
+          }
+        }
+      }
+    }
+    
+    stage('Run Container') {
+      steps{
+        dockerImage.withRun('-p 8585:8585') {c ->
+	      sh "curl -i http://${hostIp(c)}:8585/"
+	    }
+      }
+    }
+  }
+  post {
+  	always {
+  		cleanWs(cleanWhenNotBuilt: false,
+                    deleteDirs: true,
+                    disableDeferredWipeout: true,
+                    notFailBuild: true,
+                    patterns: [[pattern: '.gitignore', type: 'INCLUDE'],
+                               [pattern: '.propsfile', type: 'EXCLUDE']])
+  	}
   }
 }
