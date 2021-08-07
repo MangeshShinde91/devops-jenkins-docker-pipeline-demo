@@ -87,10 +87,10 @@ pipeline {
     stage('Run Container') {
       steps{
         script {
-          dockerImage.withRun('-p 8585:8585') {c ->
+          dockerImage.withRun('-p 8484:8484 --name container' + ${commit_id}) {c ->
             sh "curl http://checkip.amazonaws.com > .git/host_ipaddr"
             host_ip = readFile('.git/host_ipaddr').trim()
-            sh "curl -i http://${host_ip}:8585/greeting"
+            sh "curl http://${host_ip}:8484/greeting"
 		  }
         }
       }
